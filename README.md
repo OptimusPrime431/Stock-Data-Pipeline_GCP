@@ -55,7 +55,7 @@ This project automates the complete lifecycle of stock data ingestion:
 3. Load into BigQuery using `WRITE_TRUNCATE`
 
 ### 🔹 Weekly Incremental Loads
-- Cloud Composer runs every **Thursday at 1 PM UTC**
+- Cloud Composer runs every **Tuesday at 1 PM EST**
 - Fetches only the last 7 days of data
 - Uploads to GCS in `date=YYYY-MM-DD/` folder
 - Transformed data is **appended** to BigQuery table
@@ -81,7 +81,7 @@ This project automates the complete lifecycle of stock data ingestion:
 | Task               | Frequency     | Schedule (UTC)     |
 |--------------------|---------------|---------------------|
 | Initial load       | One-time      | Manual              |
-| Weekly update      | Every Thursday| `0 13 * * 4`        |
+| Weekly update      | Every Tuesday| `0 13 * * 4`        |
 
 ---
 
