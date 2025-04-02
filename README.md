@@ -1,6 +1,6 @@
 # 📈 Automated Stock Market Data Pipeline with Google Cloud Platform
 
-A robust, production-grade ETL pipeline designed to extract, process, and analyze stock market data using Google Cloud technologies. This solution supports a one-time **8-year backfill** and automated **weekly updates** through Cloud Composer (Airflow), Apache Spark (Dataproc), and BigQuery. The transformed data is engineered with advanced metrics and is analytics-ready for dashboarding tools like **Tableau** or **Looker Studio**.
+A robust, production-grade ETL pipeline designed to extract, process, and analyze stock market data using Google Cloud technologies. This solution supports a one-time **8-year backfill** and automated **weekly updates** through Cloud Composer (Airflow), Apache Spark (Dataproc), and BigQuery.
 
 ---
 
