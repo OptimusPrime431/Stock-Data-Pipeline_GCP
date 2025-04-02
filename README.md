@@ -1,109 +1,106 @@
-# 📈 Automated Stock Market Data Pipeline with GCP
+# 📈 Automated Stock Market Data Pipeline with Google Cloud Platform
 
-A scalable, production-ready ETL pipeline designed to extract, process, and analyze stock market data using Google Cloud Platform. The system automates an initial 8-year historical data load and performs weekly incremental updates using Cloud Composer, PySpark (Dataproc), and BigQuery. Data is enriched with analytical metrics and visualized through dynamic dashboards in Looker Studio.
+A robust, production-grade ETL pipeline designed to extract, process, and analyze stock market data using Google Cloud technologies. This solution supports a one-time **8-year backfill** and automated **weekly updates** through Cloud Composer (Airflow), Apache Spark (Dataproc), and BigQuery. The transformed data is engineered with advanced metrics and is analytics-ready for dashboarding tools like **Tableau** or **Looker Studio**.
 
 ---
 
 ## 🚀 Project Overview
 
-This project automates the complete lifecycle of stock data ingestion:
-- 🗂️ **Initial Load**: 8 years of historical stock data ingested and transformed
-- 🔁 **Weekly Updates**: New data fetched every week and appended
-- ⚙️ **Cloud-Native Workflow**: Orchestrated with Cloud Composer & Dataproc
-- 📊 **Visual Insights**: Presented through Looker Studio dashboards
+This project streamlines the end-to-end pipeline for stock data processing:
+
+- 🗂️ **Historical Backfill**: Ingests 8 years of stock data using `yfinance` and processes it via PySpark
+- 🔁 **Weekly Incremental Updates**: Fetches and processes fresh stock data every **Wednesday at 1 PM EST**
+- ⚙️ **Cloud-Native Orchestration**: Managed with Airflow (Cloud Composer) and executed on Dataproc
+- 🧠 **Feature-Rich Outputs**: Adds engineered features like % change, volatility, sentiment, and more
+- 📊 **Analytics-Ready**: Output stored in partitioned BigQuery tables and ready for BI dashboards
 
 ---
 
 ## ⚙️ Tech Stack
 
-| Component        | Tool/Service                      |
+| Component         | Technology                        |
 |------------------|------------------------------------|
-| **Orchestration**| Cloud Composer (Apache Airflow)    |
-| **Data Processing** | Dataproc (PySpark)              |
-| **Storage**      | Google Cloud Storage (GCS)         |
-| **Data Warehouse** | BigQuery (partitioned by date)  |
-| **Dashboarding** | Looker Studio (formerly Data Studio) |
-| **Extraction**   | Python + yfinance                  |
+| Orchestration     | Cloud Composer (Apache Airflow)   |
+| Data Processing   | Dataproc (Apache Spark)           |
+| Storage           | Google Cloud Storage (GCS)        |
+| Data Warehouse    | BigQuery (Partitioned Tables)     |
+| Visualization     | Tableau / Looker Studio           |
+| Data Extraction   | Python + yfinance                 |
 
 ---
 
-## 📦 Features
+## 📦 Key Features
 
-- ✅ **Initial 8-year data load** into BigQuery (WRITE_TRUNCATE)
-- 🔄 **Weekly incremental updates** using partition overwrite (WRITE_APPEND)
-- 🧮 Feature engineering: daily change, % change, volatility, sentiment, etc.
-- 📆 Partitioned BigQuery table for optimized queries
-- 📊 Looker dashboard with company-wise filtering, volatility trends & more
-
----
-
-## 🧪 Example Tickers
-- Apple Inc. (AAPL)
-- Microsoft Corporation (MSFT)
-- Tesla, Inc. (TSLA)
-- Alphabet Inc. (GOOGL)
-- Amazon.com, Inc. (AMZN)
-- And others...
+✅ Ingests and transforms **8 years** of historical data  
+🔄 Schedules weekly data ingestion with **partition-aware writes**  
+🧮 Feature Engineering:  
+&nbsp;&nbsp;&nbsp;&nbsp;• Daily & percentage price change  
+&nbsp;&nbsp;&nbsp;&nbsp;• Volatility and sentiment classification  
+&nbsp;&nbsp;&nbsp;&nbsp;• Day/Week/Month breakdowns  
+📁 Writes data to structured **GCS folders** and **BigQuery partitions**  
+🔗 Ready to power dashboards with real-time filtering and insights
 
 ---
 
-## 🛠 Setup
+## 📊 Sample Stocks (Tickers)
 
-### 🔹 One-Time Historical Load
-1. Run extraction script for 8 years of data using `yfinance`
-2. Transform with PySpark
-3. Load into BigQuery using `WRITE_TRUNCATE`
-
-### 🔹 Weekly Incremental Loads
-- Cloud Composer runs every **Tuesday at 1 PM EST**
-- Fetches only the last 7 days of data
-- Uploads to GCS in `date=YYYY-MM-DD/` folder
-- Transformed data is **appended** to BigQuery table
-
----
-
-## 📊 Dashboard
-
-- Built using **Looker Studio**
-- Connected directly to BigQuery
-- Shows:
-  - Time series of stock prices
-  - Market sentiment (Uptrend, Downtrend, Stable)
-  - Volatility distribution
-  - Daily averages and comparisons
-
-> 🔗 [Live dashboard link – coming soon]
+- AAPL – Apple Inc.  
+- MSFT – Microsoft Corporation  
+- TSLA – Tesla, Inc.  
+- GOOGL – Alphabet Inc.  
+- AMZN – Amazon.com, Inc.  
+- NVDA – NVIDIA Corporation  
+- META – Meta Platforms, Inc.  
+- JPM – JPMorgan Chase & Co.  
+- NFLX – Netflix, Inc.  
+- INTC – Intel Corporation  
 
 ---
 
 ## 📅 Scheduling
 
-| Task               | Frequency     | Schedule (UTC)     |
-|--------------------|---------------|---------------------|
-| Initial load       | One-time      | Manual              |
-| Weekly update      | Every Tuesday| `0 13 * * 4`        |
+| Task            | Frequency         | Schedule (UTC)         |
+|-----------------|-------------------|-------------------------|
+| Initial Load    | One-time (manual) | N/A                     |
+| Weekly Update   | Every Wednesday   | `0 13 * * 3` (1 PM EST) |
+
+> ✨ DAG is configured with `start_date=datetime(2025, 4, 2, 13, 0)` to ensure it begins on a Wednesday.
 
 ---
 
-## 🎯 Future Enhancements
+## 🚀 Setup Instructions
 
-- Add technical indicators (e.g., RSI, MACD)
-- Alert system for unusual market activity
-- Integrate real-time data streaming
-- Slack/Email alert on DAG failure
+### 🔹 Backfill (One-Time)
+1. Run `fetch_backfill.py` to fetch 8 years of data using yfinance.
+2. Run `spark_backfill.py` on Dataproc to transform and save results to:
+3. Load transformed data to BigQuery using `WRITE_TRUNCATE`.
+
+### 🔹 Weekly Updates (Automated)
+1. Upload `fetch_weekly.py` and `spark_weekly.py` to GCS.
+2. Deploy `dag.py` to Cloud Composer.
+3. DAG runs every Wednesday at 1 PM EST:
+- Fetches past 7 days
+- Uploads JSON to `stock_data/`
+- Transforms and writes Parquet to `stock_transformed/`
+- Loads to BigQuery with `WRITE_APPEND`
 
 ---
 
 ## 📜 License
 
-This project is intended for educational and personal use. Feel free to fork, contribute, or build upon it.
+This project is intended for **educational and personal use**. Contributions and forks are welcome!
 
 ---
 
 ## 🙌 Acknowledgments
 
-- Yahoo Finance for free stock data via `yfinance`
-- Google Cloud Platform for an amazing cloud ecosystem
+- [Yahoo Finance](https://finance.yahoo.com/) for free stock data via `yfinance`
+- [Google Cloud](https://cloud.google.com/) for cloud-native infrastructure
+- [Apache Airflow](https://airflow.apache.org/) for orchestrating modern data workflows
+
+---
+
+📫 Feel free to fork this repo or reach out on [LinkedIn](https://linkedin.com/) to collaborate or share feedback.
 
 
 
